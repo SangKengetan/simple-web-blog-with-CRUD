@@ -30,6 +30,10 @@ const postSchema = new mongoose.Schema(
                 },
             },
         ],
+        category: {
+            type: ObjectId,
+            ref: "Category",
+        },
     },
     { timestamps: true }
 );

@@ -3,7 +3,8 @@ import { Sidebar, Menu, MenuItem, menuClasses } from 'react-pro-sidebar';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import { Box } from '@mui/material';
 import PostAddIcon from '@mui/icons-material/PostAdd';
-import Person3Icon from '@mui/icons-material/Person3';
+import PersonIcon from '@mui/icons-material/Person';
+import CategoryIcon from '@mui/icons-material/Category';
 import { Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { userLogoutAction, userProfileAction } from '../../redux/actions/userAction';
@@ -64,7 +65,9 @@ const SidebarAdm = () => {
                                 userInfo && userInfo.role === 'admin' ?
                                     <>
                                         <MenuItem component={<Link to="/admin/dashboard" />} icon={<DashboardIcon />}> Dashboard </MenuItem>
-                                        <MenuItem component={<Link to="/admin/post/create" />} icon={<PostAddIcon />}> Create post </MenuItem>
+                                        <MenuItem component={<Link to="/admin/posts" />} icon={<PostAddIcon />}> Posts </MenuItem>
+                                        <MenuItem component={<Link to="/admin/categories" />} icon={<CategoryIcon />}> Categories </MenuItem>
+                                        <MenuItem component={<Link to="/admin/users" />} icon={<PersonIcon />}> Users </MenuItem>
                                     </> :
                                     <>
                                         <MenuItem component={<Link to="/user/dashboard" />} icon={<DashboardIcon />}> Dashboard </MenuItem>

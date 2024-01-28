@@ -5,7 +5,7 @@ const main = require('../app');
 
 //create post
 exports.createPost = async (req, res, next) => {
-    const { title, content, postedBy, image, likes, comments } = req.body;
+    const { title, content, postedBy, image, likes, comments, category } = req.body;
 
     try {
         //upload image in cloudinary
@@ -22,7 +22,7 @@ exports.createPost = async (req, res, next) => {
                 public_id: result.public_id,
                 url: result.secure_url
             },
-
+            category
         });
         res.status(201).json({
             success: true,
@@ -41,7 +41,9 @@ exports.createPost = async (req, res, next) => {
 //show posts
 exports.showPost = async (req, res, next) => {
     try {
-        const posts = await Post.find().sort({ createdAt: -1 }).populate('postedBy', 'name');
+        const posts = await Post.find().sort({ createdAt: -1 })
+            .populate('category', 'name')
+            .populate('postedBy', 'name');
         res.status(201).json({
             success: true,
             posts
@@ -56,7 +58,7 @@ exports.showPost = async (req, res, next) => {
 //show single post
 exports.showSinglePost = async (req, res, next) => {
     try {
-        const post = await Post.findById(req.params.id).populate('comments.postedBy', 'name');
+        const post = await Post.findById(req.params.id).populate('category', 'name').populate('comments.postedBy', 'name');
         res.status(200).json({
             success: true,
             post
@@ -95,7 +97,7 @@ exports.deletePost = async (req, res, next) => {
 //update post
 exports.updatePost = async (req, res, next) => {
     try {
-        const { title, content, image } = req.body;
+        const { title, content, image, category } = req.body;
         const currentPost = await Post.findById(req.params.id);
 
         //build the object data
@@ -103,6 +105,7 @@ exports.updatePost = async (req, res, next) => {
             title: title || currentPost.title,
             content: content || currentPost.content,
             image: image || currentPost.image,
+            category: category || currentPost.category,
         }
 
         //modify post image conditionally

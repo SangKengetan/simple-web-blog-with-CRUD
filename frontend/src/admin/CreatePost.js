@@ -1,4 +1,4 @@
-import { Box, Button, TextField, Typography } from '@mui/material'
+import { Box, Button, TextField, Typography, Select, MenuItem, InputLabel } from '@mui/material'
 import { useFormik } from 'formik';
 import * as yup from 'yup';
 import Dropzone from 'react-dropzone'
@@ -8,6 +8,7 @@ import { toast } from 'react-toastify'
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import { modules } from '../components/moduleToolbar';
+import React, { useEffect, useState } from 'react'
 
 
 
@@ -25,6 +26,7 @@ const validationSchema = yup.object({
 
 
 const CreatePost = () => {
+    const [categories, setCategories] = useState([]);
 
     const {
         values,
@@ -49,9 +51,6 @@ const CreatePost = () => {
         },
     });
 
-
-
-
     const createNewPost = async (values) => {
         try {
             const { data } = await axios.post('/api/post/create', values);
@@ -62,6 +61,18 @@ const CreatePost = () => {
         }
     }
 
+    const getCategories = async (values) => {
+        try {
+            const { data } = await axios.get('/api/categories/show');
+            setCategories(data.categories);
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    useEffect(() => {
+        getCategories();
+    }, [])
 
     return (
         <>
@@ -126,17 +137,11 @@ const CreatePost = () => {
                                                 <p style={{ textAlign: "center", fontSize: "12px" }}> Drop here!</p>
 
                                             </>
-                                        ) :
-
-                                            values.image === null ?
-
+                                        ) : values.image === null ?
                                                 <>
                                                     <p style={{ textAlign: "center" }}><CloudUploadIcon sx={{ color: "primary.main", mr: 2 }} /></p>
                                                     <p style={{ textAlign: "center", fontSize: "12px" }}>Drag and Drop here or click to choose</p>
                                                 </> :
-
-
-
                                                 <>
                                                     <Box sx={{ display: "flex", justifyContent: 'space-around', alignItems: 'center' }}>
 
@@ -148,6 +153,23 @@ const CreatePost = () => {
                             )}
                         </Dropzone>
                     </Box>
+                    <InputLabel id="category-label" sx={{ fontSize: 12, mx:2, mt:3 }}>
+                        Category
+                    </InputLabel>
+                    <Select sx={{ mb: 3, width: '50%' }}
+                        id="category"
+                        labelId="category-label"
+                        value={values.role}
+                        label="Category"
+                        name='category'
+                        onChange={handleChange}
+                    >
+                        {
+                            categories.map((ctg, index) => (
+                                <MenuItem value={ctg._id}>{ctg.name}</MenuItem>
+                            ))
+                        }
+                    </Select>
                     <Button
                         type="submit"
                         fullWidth

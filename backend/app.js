@@ -28,9 +28,12 @@ const errorHandler = require('./middleware/error');
 //import routes
 const authRoutes = require('./routes/authRoutes');
 const postRoute = require('./routes/postRoute');
+const userRoute = require('./routes/userRoute');
+const categoryRoute = require('./routes/categoryRoute');
 
 
 //database connection
+
 mongoose.connect(process.env.DATABASE, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
@@ -39,8 +42,6 @@ mongoose.connect(process.env.DATABASE, {
 })
   .then(() => console.log("DB connected"))
   .catch((err) => console.log(err));
-
-
 //MIDDLEWARE
 app.use(morgan('dev'));
 app.use(bodyParser.json({ limit: "5mb" }));
@@ -78,6 +79,8 @@ app.use(hpp());
 //ROUTES MIDDLEWARE
 app.use('/api', authRoutes);
 app.use('/api', postRoute);
+app.use('/api', userRoute);
+app.use('/api', categoryRoute);
 
 __dirname = path.resolve()
 
@@ -116,4 +119,3 @@ exports.io = io
 server.listen(port, () => {
   console.log(` Server running on port ${port}`);
 })
-

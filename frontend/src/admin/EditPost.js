@@ -1,4 +1,4 @@
-import { Box, Button, TextField, Typography } from '@mui/material'
+import { Box, Button, TextField, Typography, InputLabel, Select, MenuItem } from '@mui/material'
 import { useFormik } from 'formik';
 import * as yup from 'yup';
 import Dropzone from 'react-dropzone'
@@ -31,6 +31,7 @@ const EditPost = () => {
     const { id } = useParams();
     const [title, setTitle] = useState('');
     const [content, setContent] = useState('');
+    const [categories, setCategories] = useState([]);
     const [image, setImage] = useState('');
     const [imagePreview, setImagePreview] = useState('');
 
@@ -73,12 +74,22 @@ const EditPost = () => {
 
         } catch (error) {
             console.log(error);
-            toast.error(error);
+            toast.error(error.response.data);
+        }
+    }
+
+    const getCategories = async (values) => {
+        try {
+            const { data } = await axios.get('/api/categories/show');
+            setCategories(data.categories);
+        } catch (error) {
+            console.log(error);
         }
     }
 
     useEffect(() => {
-        singlePostById()
+        singlePostById();
+        getCategories();
     }, [])
 
     const updatePost = async (values) => {
@@ -86,7 +97,7 @@ const EditPost = () => {
             const { data } = await axios.put(`/api/update/post/${id}`, values);
             if (data.success === true) {
                 toast.success('post updated');
-                navigate('/admin/dashboard')
+                navigate('/admin/posts')
             }
         } catch (error) {
             console.log(error);
@@ -180,6 +191,23 @@ const EditPost = () => {
                             )}
                         </Dropzone>
                     </Box>
+                    <InputLabel id="category-label" sx={{ fontSize: 12, mx:2, mt:3 }}>
+                        Category
+                    </InputLabel>
+                    <Select sx={{ mb: 3, width: '50%' }}
+                        id="category"
+                        labelId="category-label"
+                        value={values.role}
+                        label="Category"
+                        name='category'
+                        onChange={handleChange}
+                    >
+                        {
+                            categories.map((ctg, index) => (
+                                <MenuItem value={ctg._id}>{ctg.name}</MenuItem>
+                            ))
+                        }
+                    </Select>
                     <Button
                         type="submit"
                         fullWidth
